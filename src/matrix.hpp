@@ -152,6 +152,10 @@ namespace Matrix {
 				this->determine = B.determine;
 			}
 			;
+			T operator()(int column, int row) {
+				return this->data[column][row];
+			}
+			;
 			void replace(int column, int row, T assignment) {
 				this->data[column][row] = assignment;
 				this->latest = false;
