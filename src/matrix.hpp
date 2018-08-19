@@ -12,7 +12,8 @@ namespace Matrix {
 	class matrix {
 		private:
 			T data[N][N];
-			T determine;
+			double determine;
+			bool latest;
 		public:
 			matrix() {
 				init();
@@ -25,6 +26,7 @@ namespace Matrix {
 					}
 				}
 				this->determine = 0;
+				this->latest = false;
 			}
 			;
 			matrix(const matrix<T,N>& B) {
@@ -32,7 +34,8 @@ namespace Matrix {
 					for (int icounter = 0; icounter < N; ++icounter){
 						this->data[ocounter][icounter] = B.data[ocounter][icounter];
 					}
-					this->determine = 0;
+					this->determine = B.determine;
+					this->latest = B.latest;
 				}
 			}
 			;
@@ -47,6 +50,7 @@ namespace Matrix {
 			};
 			void init(void) {
 				this->determine = 0;
+				this->latest = false;
 				for (int ocounter = 0; ocounter < N; ++ocounter){
 					for (int icounter = 0; icounter < N; ++icounter){
 						this->data[ocounter][icounter] = 0;
@@ -58,6 +62,9 @@ namespace Matrix {
 				double temp[N][N];
 				double ans = 1;
 				int change = 1;
+				if (this->latest == true){
+					return this->determine;
+				}
 				for (int i = 0; i < N; ++i){		//copy to a temp array
 					for (int j = 0; j < N; ++j){
 						temp[i][j] = data[i][j];
@@ -95,40 +102,61 @@ namespace Matrix {
 				}
 
 				ans *= double(change);
+				this->determine = ans;
+				this->latest = true;
 				return ans;
 			}
 			;
-			matrix operator+(const matrix<T,N>& B) {
+			Matrix::matrix<T,N> operator+(const matrix<T,N>& B) {
 				Matrix::matrix<T,N> temp;
 				for (int ocounter = 0; ocounter < N; ++ocounter){
 					for (int icounter = 0; icounter < N; ++icounter){
 						temp.data[ocounter][icounter] = this->data[ocounter][icounter] + B.data[ocounter][icounter];
 					}
 				}
+				temp.latest = false;
 				return temp;
 			}
 			;
-			matrix operator-(const matrix<T,N>& B) {
+			Matrix::matrix<T,N> operator-(const matrix<T,N>& B) {
 				Matrix::matrix<T,N> temp;
 				for (int ocounter = 0; ocounter < N; ++ocounter){
 					for (int icounter = 0; icounter < N; ++icounter){
 						temp.data[ocounter][icounter] = this->data[ocounter][icounter] - B.data[ocounter][icounter];
 					}
 				}
+				temp.latest = false;
 				return temp;
 			}
 			;
-			matrix operator*(const matrix<T,N>& B);
+			Matrix::matrix<T,N> operator*(const matrix<T,N>& B) {
+				Matrix::matrix<T,N> temp { };
+				for (int i = 0; i < N; ++i){
+					for (int j = 0; j < N; ++j){
+						for (int k = 0; k < N; ++k){
+							temp.data[i][j] += (this->data[i][k]) * (B.data[k][j]);
+						}
+					}
+				}
+				temp.latest = false;
+				return temp;
+			}
+			;
 			void operator=(const matrix<T,N>& B) {
 				for (int ocounter = 0; ocounter < N; ++ocounter){
 					for (int icounter = 0; icounter < N; ++icounter){
 						this->data[ocounter][icounter] = B.data[ocounter][icounter];
 					}
 				}
-
+				this->latest = B.latest;
+				this->determine = B.determine;
 			}
 			;
-
+			void replace(int column, int row, T assignment) {
+				this->data[column][row] = assignment;
+				this->latest = false;
+			}
+			;
 
 	};
 	template <typename T, int N>
