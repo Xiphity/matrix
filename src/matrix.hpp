@@ -152,6 +152,13 @@ namespace Matrix {
 				this->determine = B.determine;
 			}
 			;
+<<<<<<< HEAD
+=======
+			T operator()(int column, int row) {
+				return this->data[column][row];
+			}
+			;
+>>>>>>> Develope
 			void replace(int column, int row, T assignment) {
 				this->data[column][row] = assignment;
 				this->latest = false;
