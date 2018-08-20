@@ -9,12 +9,12 @@ int main() {
 	Matrix::matrix<int,3> I { i };
 	std::cout << test << std::endl << I << std::endl;
 	test = I * test;
-<<<<<<< HEAD
+
 	std::cout << test;
-=======
+
 	std::cout << test << std::endl;
 	std::cout << test(0, 2);
->>>>>>> Develope
+
 }
 
 
