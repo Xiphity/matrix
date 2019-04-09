@@ -166,13 +166,13 @@ namespace Matrix {
 			}
 			;
 
-			Matrix::matrix<T,N> rref() {
+			Matrix::matrix<T,N> rref() {	//make this matrix as a rref matrix
 
 			}
 			;
 	};
-	template <typename T, int N>
-	std::ostream& operator<<(std::ostream& strm, const Matrix::matrix<T,N>& B) {
+	template <typename T, int N, int M>
+	std::ostream& operator<<(std::ostream& strm, const Matrix::matrix<T,N,M>& B) {
 		B.show_matrix(strm);
 		return strm;
 	}
