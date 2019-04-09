@@ -8,10 +8,10 @@
 #define SRC_MATRIX_HPP_
 #include <iostream>
 namespace Matrix {
-	template <typename T = double, int N = 5>
+	template <typename T = double, int N = 5, int M = 5>
 	class matrix {
 		private:
-			T data[N][N];
+			T data[N][M];
 			double determine;
 			bool latest;
 		public:
@@ -19,9 +19,9 @@ namespace Matrix {
 				init();
 			}
 			;
-			matrix(T para[N][N]) {
+			matrix(T para[N][M]) {		//copy constructor (from an exist array)
 				for (int ocounter = 0; ocounter < N; ++ocounter){
-					for (int icounter = 0; icounter < N; ++icounter){
+					for (int icounter = 0; icounter < M; ++icounter){
 						this->data[ocounter][icounter] = para[ocounter][icounter];
 					}
 				}
@@ -29,9 +29,9 @@ namespace Matrix {
 				this->latest = false;
 			}
 			;
-			matrix(const matrix<T,N>& B) {
+			matrix(const matrix<T,N,M>& B) {//copy constructor(from an exist matrix)
 				for (int ocounter = 0; ocounter < N; ++ocounter){
-					for (int icounter = 0; icounter < N; ++icounter){
+					for (int icounter = 0; icounter < M; ++icounter){
 						this->data[ocounter][icounter] = B.data[ocounter][icounter];
 					}
 					this->determine = B.determine;
@@ -41,32 +41,33 @@ namespace Matrix {
 			;
 			std::ostream& show_matrix(std::ostream& strm) const {
 				for (int ocounter = 0; ocounter < N; ++ocounter){
-					for (int icounter = 0; icounter < N; ++icounter){
+					for (int icounter = 0; icounter < M; ++icounter){
 						strm << this->data[ocounter][icounter] << " ";
 					}
 					strm << "\n";
 				};
 				return strm;
-			};
+			}
+			;
 			void init(void) {
 				this->determine = 0;
 				this->latest = false;
 				for (int ocounter = 0; ocounter < N; ++ocounter){
-					for (int icounter = 0; icounter < N; ++icounter){
+					for (int icounter = 0; icounter < M; ++icounter){
 						this->data[ocounter][icounter] = 0;
 					}
 				}
 			}
 			;
 			double det(void) {
-				double temp[N][N];
+				double temp[N][M];
 				double ans = 1;
 				int change = 1;
 				if (this->latest == true){
 					return this->determine;
 				}
-				for (int i = 0; i < N; ++i){		//copy to a temp array
-					for (int j = 0; j < N; ++j){
+				for (int i = 0; i < N; ++i){		//copy to a temporary array
+					for (int j = 0; j < M; ++j){
 						temp[i][j] = data[i][j];
 					}
 				}
@@ -74,7 +75,7 @@ namespace Matrix {
 				for (int i = 0; i < N; ++i){			//高斯消去
 					for (int g = i + 1; g < N; ++g){   //要加到別人身上的那一行開頭是0就跟不為0的對調
 						if (temp[i][i] == 0){
-							for (int k = 0; k < N; ++k){
+							for (int k = 0; k < M; ++k){
 								double temp_k = temp[i][k];
 								temp[i][k] = temp[g][k];
 								temp[g][k] = temp_k;
@@ -84,14 +85,14 @@ namespace Matrix {
 						else{
 							break;
 						}
-					}
-					if (temp[i][i] == 0){
-						continue;
-					}
 
+						if (temp[i][i] == 0){
+							continue;
+						}
+					}
 					for (int j = i + 1; j < N; ++j){    		//把第i列加到第i+1～n列
 						double factor = temp[j][i] / temp[i][i]; 	//倍率
-						for (int k = 0; k < N; ++k){
+						for (int k = 0; k < M; ++k){
 							temp[j][k] += (temp[i][k] * factor * -1);
 						}
 					}
@@ -107,10 +108,10 @@ namespace Matrix {
 				return ans;
 			}
 			;
-			Matrix::matrix<T,N> operator+(const matrix<T,N>& B) {
-				Matrix::matrix<T,N> temp;
+			Matrix::matrix<T,N,M> operator+(const matrix<T,N,M>& B) {
+				Matrix::matrix<T,N,M> temp;
 				for (int ocounter = 0; ocounter < N; ++ocounter){
-					for (int icounter = 0; icounter < N; ++icounter){
+					for (int icounter = 0; icounter < M; ++icounter){
 						temp.data[ocounter][icounter] = this->data[ocounter][icounter] + B.data[ocounter][icounter];
 					}
 				}
@@ -118,10 +119,10 @@ namespace Matrix {
 				return temp;
 			}
 			;
-			Matrix::matrix<T,N> operator-(const matrix<T,N>& B) {
-				Matrix::matrix<T,N> temp;
+			Matrix::matrix<T,N,M> operator-(const matrix<T,N,M>& B) {
+				Matrix::matrix<T,N,M> temp;
 				for (int ocounter = 0; ocounter < N; ++ocounter){
-					for (int icounter = 0; icounter < N; ++icounter){
+					for (int icounter = 0; icounter < M; ++icounter){
 						temp.data[ocounter][icounter] = this->data[ocounter][icounter] - B.data[ocounter][icounter];
 					}
 				}
@@ -129,11 +130,12 @@ namespace Matrix {
 				return temp;
 			}
 			;
-			Matrix::matrix<T,N> operator*(const matrix<T,N>& B) {
-				Matrix::matrix<T,N> temp { };
+			template <int X = 5, int Y = 5>
+			Matrix::matrix<T,N,M> operator*(const matrix<T,X,Y>& B) { //cross product
+				Matrix::matrix<T,N,Y> temp { };
 				for (int i = 0; i < N; ++i){
-					for (int j = 0; j < N; ++j){
-						for (int k = 0; k < N; ++k){
+					for (int j = 0; j < Y; ++j){
+						for (int k = 0; k < M; ++k){
 							temp.data[i][j] += (this->data[i][k]) * (B.data[k][j]);
 						}
 					}
@@ -142,7 +144,7 @@ namespace Matrix {
 				return temp;
 			}
 			;
-			void operator=(const matrix<T,N>& B) {
+			void operator=(const matrix<T,N>& B) {					//assignment
 				for (int ocounter = 0; ocounter < N; ++ocounter){
 					for (int icounter = 0; icounter < N; ++icounter){
 						this->data[ocounter][icounter] = B.data[ocounter][icounter];
@@ -152,7 +154,6 @@ namespace Matrix {
 				this->determine = B.determine;
 			}
 			;
-
 
 			T operator()(int column, int row) {
 				return this->data[column][row];
@@ -165,12 +166,16 @@ namespace Matrix {
 			}
 			;
 
+			Matrix::matrix<T,N> rref() {
+
+			}
+			;
 	};
 	template <typename T, int N>
 	std::ostream& operator<<(std::ostream& strm, const Matrix::matrix<T,N>& B) {
 		B.show_matrix(strm);
 		return strm;
-}
+	}
 }
 ;
 #endif /* SRC_MATRIX_HPP_ */
