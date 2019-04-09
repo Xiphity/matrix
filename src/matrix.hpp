@@ -42,7 +42,7 @@ namespace Matrix {
 			std::ostream& show_matrix(std::ostream& strm) const {
 				for (int ocounter = 0; ocounter < N; ++ocounter){
 					for (int icounter = 0; icounter < M; ++icounter){
-						strm << this->data[ocounter][icounter] << " ";
+						strm << this->data[ocounter][icounter] << "\t";
 					}
 					strm << "\n";
 				};
@@ -91,7 +91,7 @@ namespace Matrix {
 						}
 					}
 					for (int j = i + 1; j < N; ++j){    		//把第i列加到第i+1～n列
-						double factor = temp[j][i] / temp[i][i]; 	//倍率
+						double factor = double(temp[j][i]) / double(temp[i][i]); //倍率
 						for (int k = 0; k < M; ++k){
 							temp[j][k] += (temp[i][k] * factor * -1);
 						}
@@ -166,16 +166,54 @@ namespace Matrix {
 			}
 			;
 
-			Matrix::matrix<T,N> rref() {	//make this matrix as a rref matrix
+			Matrix::matrix<T,N,M> rref(Matrix::matrix<T,N,M> A) {//make this matrix as a rref matrix
+				for (int i = 0; i < N; ++i){			//高斯消去
+					for (int g = i + 1; g < N; ++g){   //要加到別人身上的那一行開頭是0就跟不為0的對調
+						if (A.data[i][i] == 0){
+							for (int k = 0; k < M; ++k){
+								double temp_k = A.data[i][k];
+								A.data[i][k] = A.data[g][k];
+								A.data[g][k] = temp_k;
+							}
 
+						}
+						else{
+							break;
+						}
+
+						if (A.data[i][i] == 0){
+							continue;
+						}
+					}
+					for (int j = i + 1; j < N; ++j){    		//把第i列加到第i+1～n列
+						for (int k = 0; k < M; ++k){
+							double factor = double(A.data[j][i]) / double(A.data[i][i]); //倍率
+							A.data[j][k] += (A.data[i][k] * factor * -1);
+						}
+					}
+					for (int j = i - 1; j >= 0; --j){    		//把第i列加到第i-1～0列
+						for (int k = 0; k < M; ++k){
+							double factor = double(A.data[j][i]) / double(A.data[i][i]); //倍率
+							A.data[j][k] += (A.data[i][k] * factor * -1);
+						}
+					}
+				}
+				return A;
 			}
 			;
+
 	};
 	template <typename T, int N, int M>
 	std::ostream& operator<<(std::ostream& strm, const Matrix::matrix<T,N,M>& B) {
 		B.show_matrix(strm);
 		return strm;
 	}
+	;
+	template <typename T, int N = 5, int M = 5>
+	Matrix::matrix<T,N,M> rref(Matrix::matrix<T,N,M> A) { //make this matrix as a rref matrix
+		return A.rref(A);
+	}
+	;
 }
 ;
 #endif /* SRC_MATRIX_HPP_ */

@@ -10,9 +10,9 @@ int main() {
 	std::cout << test << std::endl << I << std::endl;
 	test = I * test;
 
-	std::cout << test;
-
 	std::cout << test << std::endl;
+
+	std::cout << rref(test) << std::endl;
 	std::cout << test(0, 2);
 
 }
