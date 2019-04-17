@@ -2,18 +2,13 @@
 #include <cstdlib>
 #include "matrix.hpp"
 using namespace std;
+
 int main() {
-	int ans[3][3] = { 0, 8, 8, 4, 5, 6, 7, 1, 3 };
-	int i[3][3] = { 1, 0, 0, 0, 2, 0, 0, 0, 1 };
-	Matrix::matrix<int,3,3> test { ans };
-	Matrix::matrix<int,3,3> I { i };
-	std::cout << test << std::endl << I << std::endl;
-	test = I * test;
-
-	std::cout << test << std::endl;
-
-	std::cout << rref(test) << std::endl;
-	std::cout << test(0, 2);
-
+	double ans[4][5] = { 1, -3, 0, -5, -7, 3, -12, -2, -27, -33, -2, 10, 2, 24, 29, -1, 6, 1, 14, 17 };
+	Matrix::matrix<double,4,5> test(ans);
+	cout << test << endl << " det:" << test.det() << endl;
+	cout << test.rref(test);
+	//cout << (0 == -0);
+//29608.625
 }
 
