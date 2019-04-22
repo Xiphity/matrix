@@ -187,6 +187,9 @@ namespace Matrix {
 			;
 
 			Matrix::matrix<T,N,M> rref(Matrix::matrix<T,N,M> A) {				//make this matrix as a rref matrix
+#ifdef  matrix_debug
+				std::cout << "\n\n\n-----------rref debug message----------\n";
+#endif
 				for (int i = 0; i < N; ++i){			//高斯消去
 					for (int a = 0; a < N; ++a){
 						for (int b = 0; b < M; ++b){
@@ -280,6 +283,7 @@ namespace Matrix {
 #ifdef matrix_debug
 				std::cout << "Move 0 rows\n";
 #endif
+				A.catch_zero(A);
 				for (int i = 0; i < N - 1; ++i){    	//移動全0列
 					bool check = true;
 					//int f = 0, where = 0;
@@ -334,6 +338,9 @@ namespace Matrix {
 
 					}
 				}
+#ifdef  matrix_debug
+				std::cout << "-----------End debug message ----------\n\n\n";
+#endif
 				A.fix_zero(A);
 				return A;
 			}
@@ -351,6 +358,19 @@ namespace Matrix {
 				for (int i = 0; i < N; ++i){
 					for (int j = 0; j < M; ++j){
 						if (A.data[i][j] == -0){
+							A.data[i][j] = 0;
+						}
+					}
+				}
+			}
+
+			void catch_zero(matrix<T,N,M>& A) {
+				for (int i = 0; i < N; ++i){
+					for (int j = 0; j < M; ++j){
+						if ((A.data[i][j] < 0.000000001) && (A.data[i][j] > -0.00000000001)){
+#ifdef matrix_debug
+							std::cout << "Catch 0 of (" << i << " , " << j << ")\n";
+#endif
 							A.data[i][j] = 0;
 						}
 					}
